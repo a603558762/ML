@@ -29,7 +29,7 @@ local ctx_debug = backend.debug
 local flags = {}
 local kHttpHeaderSent = 1
 local kHttpHeaderRecived = 2
-local is_http_request = http.is_http_request
+
 function wa_lua_on_flags_cb(ctx)
     return DIRECT_WRITE
 end
@@ -47,8 +47,8 @@ function wa_lua_on_handshake_cb(ctx)
         local res = 'CONNECT ' .. host .. ':' .. port .. ' HTTP/1.1\r\n' ..
                     'Host: ' .. host .. ':' .. port .. '\r\n' ..
                     'Proxy-Connection: Keep-Alive\r\n'..
-                    'X-T5-Auth: YTY0Nzlk\r\n'..
-                    'User-Agent: okhttp/3.11.0 Dalvik/2.1.0 (Linux; Android 10; MIX 2S Build/QKQ1.190828.002; wv) baiduboxapp/11.0.5.12 (Baidu; P1 11)\r\n\r\n'
+                    'X-T5-Auth: 1967948331\r\n' ..
+                    'User-Agent: baiduboxapp\r\n\r\n'
         ctx_write(ctx, res)
         flags[uuid] = kHttpHeaderSent
     end
@@ -68,27 +68,6 @@ end
 
 function wa_lua_on_write_cb(ctx, buf)
     ctx_debug('wa_lua_on_write_cb')
-    return DIRECT, buf
-	local host = ctx_address_host(ctx)
-    local port = ctx_address_port(ctx)
-    
-    if ( is_http_request(buf) == 1 ) then
-            local index = find(buf, '/')
-            local method = sub(buf, 0, index - 1)
-            local rest = sub(buf, index)
-            local s, e = find(rest, '\r\n')
-            
-            local less = sub(rest, e + 1)
-            local s1, e1 = find(less, '\r\n')
-
-            buf = method .. sub(rest, 0, e) .. 
-            --'X-Online-Host:\t\t ' .. host ..'\r\n' ..
-            '\tHost: a.189.cn:80\r\n'..
-            'X-T5-Auth: YTY0Nzlk\r\n' ..
-            sub(rest, e + 1)
-            
-    end
-    
     return DIRECT, buf
 end
 
